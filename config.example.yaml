@@ -1,0 +1,156 @@
+# Slow Trader Configuration Example
+# Copy this file to config.yaml and customize for your needs
+
+# =============================================================================
+# Exchange Configuration
+# =============================================================================
+exchange:
+  # Supported: demo, binance, alpaca
+  name: demo
+
+  # Use testnet/paper trading (HIGHLY RECOMMENDED for testing)
+  testnet: true
+
+  # API credentials (use environment variables for security)
+  # Set these in your environment or .env file:
+  #   export BINANCE_API_KEY="your-api-key"
+  #   export BINANCE_API_SECRET="your-api-secret"
+  api_key_env: "BINANCE_API_KEY"
+  api_secret_env: "BINANCE_API_SECRET"
+
+  # Exchange-specific options
+  extra:
+    # For Binance: "spot" or "futures"
+    market_type: spot
+
+# =============================================================================
+# Trading Pairs
+# =============================================================================
+trading_pairs:
+  # Crypto pairs (for Binance)
+  - symbol: "BTC/USDT"
+    base_currency: "BTC"
+    quote_currency: "USDT"
+    min_order_size: 0.001
+    price_precision: 2
+    quantity_precision: 6
+
+  - symbol: "ETH/USDT"
+    base_currency: "ETH"
+    quote_currency: "USDT"
+    min_order_size: 0.01
+    price_precision: 2
+    quantity_precision: 5
+
+  # Stock pairs (for Alpaca) - use format "SYMBOL/USD"
+  # - symbol: "AAPL/USD"
+  #   base_currency: "AAPL"
+  #   quote_currency: "USD"
+  #   min_order_size: 1
+  #   price_precision: 2
+  #   quantity_precision: 0
+
+# =============================================================================
+# Trading Strategies
+# =============================================================================
+# You can enable multiple strategies - they will vote on signals
+strategies:
+  # Combined strategy - requires multiple indicator confirmation
+  - name: combined
+    enabled: true
+    params:
+      ema_period: 20
+      rsi_period: 14
+      rsi_overbought: 70
+      rsi_oversold: 30
+      macd_fast: 12
+      macd_slow: 26
+      macd_signal: 9
+      min_confirmations: 2  # Need 2 out of 3 indicators to agree
+
+  # Moving Average Crossover
+  - name: ma_crossover
+    enabled: true
+    params:
+      fast_period: 10
+      slow_period: 20
+      ma_type: ema  # "ema" or "sma"
+
+  # RSI Overbought/Oversold
+  - name: rsi
+    enabled: false
+    params:
+      period: 14
+      overbought: 70
+      oversold: 30
+
+  # MACD Signal Crossover
+  - name: macd
+    enabled: false
+    params:
+      fast_period: 12
+      slow_period: 26
+      signal_period: 9
+
+  # Trend Following (ADX-based)
+  - name: trend_following
+    enabled: false
+    params:
+      short_ema: 10
+      long_ema: 50
+      adx_period: 14
+      adx_threshold: 25
+
+  # Mean Reversion (Bollinger Bands)
+  - name: mean_reversion
+    enabled: false
+    params:
+      bb_period: 20
+      bb_std: 2.0
+      rsi_period: 14
+      rsi_extreme: 20
+
+# =============================================================================
+# Risk Management
+# =============================================================================
+risk:
+  # Maximum position size as percentage of portfolio (0.1 = 10%)
+  max_position_size: 0.1
+
+  # Maximum daily loss before stopping (0.05 = 5%)
+  max_daily_loss: 0.05
+
+  # Default stop loss percentage (0.02 = 2%)
+  stop_loss_pct: 0.02
+
+  # Default take profit percentage (0.05 = 5%)
+  take_profit_pct: 0.05
+
+  # Maximum number of concurrent open positions
+  max_open_positions: 5
+
+# =============================================================================
+# Scheduling
+# =============================================================================
+# How often to check for trading signals (in minutes)
+check_interval_minutes: 15
+
+# Trading hours (24-hour format, local time)
+trading_hours_start: 9   # Start at 9 AM
+trading_hours_end: 17    # Stop at 5 PM
+
+# Trading days (0 = Monday, 6 = Sunday)
+trading_days: [0, 1, 2, 3, 4]  # Monday to Friday
+
+# =============================================================================
+# General Settings
+# =============================================================================
+# Paper trading mode - set to false for live trading
+# ⚠️  WARNING: Setting this to false will trade with real money!
+dry_run: true
+
+# Logging level: DEBUG, INFO, WARNING, ERROR
+log_level: INFO
+
+# Directory for logs and data
+data_dir: ./data
